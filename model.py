@@ -89,27 +89,36 @@ class Kategorija:
         return kategorija
 
 class Recept:
-    def __init__(self, ime, tezavnost, sestavine, postopek):
+    def __init__(self, ime, stevilo_oseb, tezavnost, postopek):
         self.ime = ime
+        self.stevilo_oseb = stevilo_oseb
         self.tezavnost = tezavnost
-        self.sestavine = sestavine
+        self.sestavine = {}
         self.postopek = postopek
+        
+    def dodaj_sestavino(self, ime, kolicina):
+        self.sestavine[ime] = kolicina
+
+    def pobrisi_sestavino(self, ime):
+        self.sestavine.pop(ime)
 
     def v_slovar(self):
         return {
             "ime": self.ime,
+            "stevilo_oseb" : self.stevilo_oseb,
             "tezavnost": self.tezavnost,
             "sestavine": self.sestavine,
-            "postopek": self.postopek,
+            "postopek": self.postopek
         }
 
     @staticmethod
     def iz_slovarja(slovar):
         return Recept(
             slovar["ime"],
+            slovar["stevilo_oseb"],
             slovar["tezavnost"],
             slovar["sestavine"],
-            slovar["postopek"],
+            slovar["postopek"]
         )
 
 
