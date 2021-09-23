@@ -13,7 +13,7 @@ class Kuharica:
     def pobrisi_kategorijo(self, kategorija):
         self.kategorije.remove(kategorija)
 
-    def zamenjaj_kategorij0(self, kategorija):
+    def zamenjaj_kategorijo(self, kategorija):
         self.aktualna_kategorija = kategorija
 
     def dodaj_recept(self, recept):
@@ -64,12 +64,18 @@ class Kategorija:
     def __init__(self, ime):
         self.ime = ime
         self.recepti = []
+        self.aktualni_recept = None
 
     def dodaj_recept(self, recept):
         self.recepti.append(recept)
+        if not self.aktualni_recept:
+            self.aktualni_recept = recept
 
     def pobrisi_recept(self, recept):
         self.recepti.remove(recept)
+
+    def zamenjaj_recept(self, recept):
+        self.aktualni_recept = recept
 
     def stevilo_receptov(self):
         return len(self.recepti)
@@ -77,7 +83,9 @@ class Kategorija:
     def v_slovar(self):
         return {
             "ime": self.ime,
-            "recepti": [recept.v_slovar() for recept in self.recepti],
+            "recepti": [
+                recept.v_slovar() for recept in self.recepti
+                ],
         }
 
     @staticmethod
