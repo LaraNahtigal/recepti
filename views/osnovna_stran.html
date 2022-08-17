@@ -1,138 +1,33 @@
 % rebase('base.html')
 <!-- Main container -->
+
 <nav class="level">
-    <div class="level-left">
-        <form method="POST" action="/zamenjaj-aktualno-kategorijo/">
-            <div class="buttons has-addons field is-horizontal">
-                % for indeks, recept in enumerate(recepti):
-                % if kategorija == aktualna_kategorija:
-                <button class="button is-primary is-selected" name="indeks" value="{{indeks}}">
-                    {{kategorija.ime}}
-                    <span class="tag is-rounded">{{kategorija.stevilo_receptov()}}</span>
-                </button>
-                % else:
-                <button class="button" name="indeks" value="{{indeks}}">
-                    {{spisek.ime}}
-                    <span class="tag is-rounded">{{kategorija.stevilo_receptov()}}</span>
-                </button>
-                % end
-                % end
-            </div>
-        </form>
-
-    </div>
-
     <div class="level-right">
-        <!-- <div class="level-item">
-            <p class="subtitle is-5">
-                <strong>123</strong> posts
-            </p>
-        </div> -->
-            <div class="level-item">
-                <a class="button is-info" href="/dodaj-kategorijo/">dodaj kategorijo</a>
-            </div>
-        </form>
+        <p style="text-align:center"><i>Pozdravljeni v svoj dnevnik receptov. Tu si lahko shranjujete in spreminjate svoje najljubše recepte.
+            </i></p><br>
+        <p>Kliknite <a class="button is-primary" href="/dodaj_kategorijo/" method="POST">TU</a>, če želite dodati kategorijo.<br>
+        Spodaj najdete že obstoječe kategorije, klik na želeno kategorijo vam bo pokazal vse recepte, ki se skrivajo v njej.</p>
     </div>
+    <div class="level-left">
+        <div class="buttons has-addons field is-horizontal">
+            <dl>
+                <dt><b>Kategorije:</b></dt>
+                    % for index_kategorije, kategorija in enumerate(kategorije):
+                    <dd><a class="button" href="/kategorija/{{index_kategorije}}/"  name="index_kategorije" value="{{index_kategorije}}">
+                        <span style="text-transform:uppercase">{{kategorija.ime}}</span>
+                    </a></dd>
+                    % end
+            </dl>
+        </div>
+    </div>
+    <p>Če želite katero od obstoječih kategorij odstraniti, le rešite spodnji obrazec in kliknite gumb izbriši.
+        <form action="/odstrani_kategorijo/" method="POST">
+            <fieldset>
+              <legend>ODSTRANI KATEGORIJO</legend>
+              <label for="ime">Ime kategorije:</label>
+              <input type="text" id="ime" name="ime">
+              <input type="submit" value="Izbriši!" href="/">
+            </fieldset>
+        </form>
+    </p>
 </nav>
-
-% if aktualna_kategorija:
-
-<table class="table is-hoverable is-fullwidth">
-    <thead>
-        <tr>
-            <form method="POST" action="/dodaj/">
-                <td></td>
-                <td>
-                    <div class="control has-icons-left">
-                        <input class="input is-small" type="text" name="ime" placeholder="ime">
-                        <span class="icon is-small is-left">
-                            <i class="far fa-clipboard-check"></i>
-                        </span>
-                    </div>
-                </td>
-                <td>
-                    <div class="control has-icons-left">
-                        <input class="input is-small" type="text" name="stevilo_oseb" placeholder="stevilo_oseb">
-                        <span class="icon is-small is-left">
-                            <i class="far fa-calendar-alt"></i>
-                        </span>
-                    </div>
-                </td>
-                <td>
-                    <div class="control has-icons-left">
-                        <input class="input is-small" type="text" name="tezavnost" placeholder="tezavnost">
-                        <span class="icon is-small is-left">
-                            <i class="far fa-calendar-alt"></i>
-                        </span>
-                    </div>
-                </td>
-                <td>
-                    <div class="control has-icons-left">
-                        <input class="input is-small" type="text" name="postopek" placeholder="postopek">
-                        <span class="icon is-small is-left">
-                            <i class="far fa-sticky-note"></i>
-                        </span>
-                    </div>
-                </td>
-                <td>
-                    <div class="control">
-                        <button class="button is-info is-small">dodaj</button>
-                    </div>
-                </td>
-            </form>
-        </tr>
-    </thead>
-    <tbody>
-        % for indeks, opravilo in enumerate(opravila):
-        <tr>
-            <td>
-                <form method="POST" action="/zamenjaj-opravljeno/">
-                    <input type="hidden" name="indeks" value="{{indeks}}">
-                    <button class="button is-white">
-                        <span class="icon is-small">
-                            % if recept == aktualni_recept:
-                            <tr>
-                                <form method="POST" action="/dodaj-sestavino/">
-                                    <td></td>
-                                    <td>
-                                        <div class="control has-icons-left">
-                                            <input class="input is-small" type="text" name="ime" placeholder="ime">
-                                            <span class="icon is-small is-left">
-                                                <i class="far fa-clipboard-check"></i>
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="control has-icons-left">
-                                            <input class="input is-small" type="text" name="kolicina" placeholder="kolicina">
-                                            <span class="icon is-small is-left">
-                                                <i class="far fa-calendar-alt"></i>
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="control">
-                                            <button class="button is-info is-small">dodaj</button>
-                                        </div>
-                                    </td>
-                                </form>
-                            </tr>                            
-                            % end
-                        </span>
-                    </button>
-                </form>
-            </td>
-            <td>{{ recept.ime }}</td>
-            <td>{{ recept.stevilo_oseb }}</td>
-            <td>{{ recept.tezavnost }}</td>
-            <td>{{ recept.postopek }}</td>
-            <td>{{ recept.sestavine }}</td>
-            <td></td>
-        </tr>
-        % end
-    </tbody>
-</table>
-
-% else:
-
-<p>Nimate še nobene kategorije. <a href="/dodaj-kategorijo/">Dodajte jo!</a></p>

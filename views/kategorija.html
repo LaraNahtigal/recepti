@@ -1,0 +1,58 @@
+% rebase('base.html')
+
+<nav class="level">
+  <div class="level-left">
+      <div class="buttons has-addons field is-horizontal">
+          % for index_kategorije, kategorija in enumerate(kategorije):
+          % if kategorija == aktualna_kategorija:
+          <a class="button is-primary is-selected" name="index_kategorije" value="{{index_kategorije}}">
+            <span style="text-transform:uppercase"><b>{{kategorija.ime}}</b></span></a><br><br>
+              <form action="/dodaj_recept/{{index_kategorije}}/" method="POST">
+                <fieldset>
+                  <legend>DODAJ RECEPT</legend>
+                  <label for="ime">Ime recepta:</label>
+                  <input type="text" id="ime" name="ime"><br><br>
+                  <label for="stevilo_oseb">Število oseb:</label>
+                  <input type="text" id="stevilo_oseb" name="stevilo_oseb"><br><br>
+                  <label for="tezavnost">Težavnost:</label>
+                  <input type="text" id="tezavnost" name="tezavnost"><br><br>
+                  <label for="postopek">Postopek:</label>
+                  <input type="text" id="postopek" name="postopek"><br><br>
+                  <input type="submit" value="Dodaj!" href="/recept/{{index_kategorije}}/">
+                  </fieldset>
+              </form>
+              <form action="/odstrani_recept/{{index_kategorije}}/" method="POST">
+                <fieldset>
+                  <legend>ODSTRANI RECEPT</legend>
+                  <label for="ime">Ime recepta:</label>
+                  <input type="text" id="ime" name="ime">
+                  <input type="submit" value="Izbriši!" href="/recept/{{index_kategorije}}/">
+                </fieldset>
+              </form>
+      <div class="box">
+        <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+            <ul>                  
+              <h3>Recepti:</h3>
+              % for index_recepta, recept in enumerate(recepti):
+              <li><a class="button" href="/recept/{{index_kategorije}}/{{index_recepta}}/"  name="index_recepta" value="{{index_recepta}}">{{recept.ime}}
+              % end
+            </ul>
+        </nav>
+      </div>
+          % else:
+          <a href="/kategorija/{{index_kategorije}}/" class="button" name="index_kategorije" value="{{index_kategorije}}">
+            <span style="text-transform:uppercase">{{kategorija.ime}}</span><br>
+          </a>
+          % end
+          % end
+    </div>
+    <div class="field is-grouped">
+      <div class="control">
+          <a class="button is-link is-light" href="/">Prekliči</a>
+      </div>
+    </div>
+  </nav>
+
+
+
+    

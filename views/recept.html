@@ -1,0 +1,45 @@
+% rebase('base.html')
+
+<nav class="level">
+    <div class="level-left">
+        <div class="buttons has-addons field is-horizontal">
+            % for index_recepta, recept in enumerate(recepti):
+            % if recept==aktualen_recept:
+            <h3>{{recept.ime}}</h3>
+            <li>Število oseb: {{recept.stevilo_oseb}}</li>
+            <li>Težavnost: {{recept.tezavnost}}</li>
+            <li>Postopek: {{recept.postopek}}</li>
+            <li>Sestavine: {{recept.sestavine}}</li><br><br>
+                % for index_kategorije, kategorija in enumerate(kategorije):
+                % if index_kategorije == index_aktualne_kat: 
+                <form action="/dodaj_sestavino/{{index_kategorije}}/{{index_recepta}}/" method="POST">
+                    <fieldset>
+                        <legend>DODAJ SESTAVINO</legend>
+                        <label for="ime">Ime sestavine:</label>
+                        <input type="text" id="ime" name="ime"><br><br>
+                        <label for="kolicina">Količina:</label>
+                        <input type="text" id="kolicina" name="kolicina"><br><br>
+                        <input type="submit" value="Dodaj!" href="/recept/{{index_kategorije}}/{{index_recepta}}/">
+                    </fieldset>
+                </form>
+                <form action="/odstrani_sestavino/{{index_kategorije}}/{{index_recepta}}/" method="POST">
+                    <fieldset>
+                        <legend>IZBRIŠI SESTAVINO</legend>
+                        <label for="ime">Ime sestavine:</label>
+                        <input type="text" id="ime" name="ime"><br><br>
+                        <input type="submit" value="Izbriši!" href="/recept/{{index_kategorije}}/{{index_recepta}}/">
+                    </fieldset>
+                </form>
+                % end
+                % end
+            % end
+            % end
+        </div>
+    </div>
+    <div class="field is-grouped">
+        <div class="control">
+            <a class="button is-link is-light" href="/">Prekliči</a>
+        </div>
+      </div>
+</nav>
+                
