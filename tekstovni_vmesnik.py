@@ -10,7 +10,7 @@ except FileNotFoundError:
 
 DODAJ_KATEGORIJO = 1
 POBRISI_KATEGORIJO = 2
-ZAMENJAJ_KATEGORIJO = 3
+PRIKAZI_KATEGORIJO = 3
 DODAJ_RECEPT = 4
 POBRISI_RECEPT = 5
 DODAJ_SESTAVINO = 6
@@ -40,24 +40,24 @@ def izberi_moznost(moznosti):
 
 
 def prikaz_kategorije(kategorija):
-    vsa = kategorija.stevilo_vseh()
-    return f"{kategorija.ime} ({vsa})"
+    return f"{kategorija.ime}"
 
-def prikaz_sestavin(sestavine):
-    for ime in sestavine.keys():
-        return f"{ime} - {sestavine[ime]}"
 
 def prikaz_recepta(recept):
-    return f"{recept.ime}, sestavine: {prikaz_sestavin(recept.sestavine)}"
+    return f"{recept.ime}, sestavine: {recept.sestavine}"
+
+def prikaz_sestavine(sestavine):
+    for sestavina in sestavine.keys():
+        return f'{sestavina} - {sestavine[sestavina]}'
 
 def izberi_kategorijo(model):
     return izberi_moznost([(kategorija, prikaz_kategorije(kategorija)) for kategorija in model.kategorije])
 
 def izberi_recept(model):
-    return izberi_moznost([(recept, prikaz_recepta(recept)) for recept in model.aktualna_kategorija.recepti])
+    return izberi_moznost([(recept, prikaz_recepta(recept)) for recept in model.recepti])
 
 def izberi_sestavino(recept):
-    return izberi_moznost([(ime, prikaz_sestavin(recept.sestavine)) for ime in recept.sestavine.keys()])
+    return izberi_moznost([(ime, prikaz_sestavine(recept.sestavine)) for ime in recept.sestavine.keys()])
 
 def tekstovni_vmesnik():
     prikazi_pozdravno_sporocilo()
@@ -67,7 +67,7 @@ def tekstovni_vmesnik():
             [
                 (DODAJ_KATEGORIJO, "dodaj novo kategorijo"),
                 (POBRISI_KATEGORIJO, "pobriši kategorijo"),
-                (ZAMENJAJ_KATEGORIJO, "prikaži drugo kategorijo"),
+                (PRIKAZI_KATEGORIJO, "prikaži kategorijo"),
                 (DODAJ_RECEPT, "dodaj nov recept"),
                 (POBRISI_RECEPT, "pobriši recept"),
                 (DODAJ_SESTAVINO, "dodaj novo sestavino"),
@@ -79,8 +79,8 @@ def tekstovni_vmesnik():
             dodaj_kategorijo()
         elif ukaz == POBRISI_KATEGORIJO:
             pobrisi_kategorijo()
-        elif ukaz == ZAMENJAJ_KATEGORIJO:
-            zamenjaj_kategorijo()
+        elif ukaz == PRIKAZI_KATEGORIJO:
+            prikazi_kategorijo()
         elif ukaz == DODAJ_RECEPT:
             dodaj_recept()
         elif ukaz == POBRISI_RECEPT:
@@ -100,9 +100,10 @@ def prikazi_pozdravno_sporocilo():
 
 
 def prikazi_aktualne_recepte():
-    if kuharica.aktualna_kategorija:
-        for recept in kuharica.aktualna_kategorija.recepti:
-            print(f"- {prikaz_recepta(recept)}")
+    if kuharica.kategorije:
+        for kategorija in kuharica.kategorije:
+            for recept in kategorija.recepti:
+                print(f"- {prikaz_recepta(recept)}")
     else:
         print("Ker nimate še nobene kategorije, morate eno ustvariti.")
         dodaj_kategorijo()
@@ -111,7 +112,7 @@ def prikazi_aktualne_recepte():
 def dodaj_kategorijo():
     print("Vnesite podatke nove kategorije.")
     ime = input("Ime> ")
-    nova_kategorija = Kategorija(ime)
+    nova_kategorija = Kategorija(ime, [])
     kuharica.dodaj_kategorijo(nova_kategorija)
 
 
@@ -121,41 +122,58 @@ def pobrisi_kategorijo():
     kuharica.pobrisi_kategorijo(kategorija)
 
 
-def zamenjaj_kategorijo():
-    print("Izberite kategorijo, na katero bi preklopili.")
+def prikazi_kategorijo():
+    print("Izberite kategorijo, ki bi jo radi videli.")
     kategorija = izberi_kategorijo(kuharica)
-    kuharica.zamenjaj_kategorijo(kategorija)
-
+    return f'{kategorija} : {kategorija.recepti}'
+#Napaka, saj prikaže vse kategorije in ne samo zahtevane!!!
 
 def dodaj_recept():
+    kategorija = izberi_kategorijo(kuharica)
     print("Vnesite podatke novega recepta.")
+    sestavine = {}
     ime = input("Ime> ")
-    stevilo_oseb = int(input("Vnesite za koliko oseb je primeren recept> "))
-    tezavnost = int(input("Tezavnost, vnesite število od 1 do 5> "))
+    while True:
+        try:
+            stevilo_oseb = int(input("Vnesite za koliko oseb je primeren recept> "))
+            break
+        except:
+            print('Vnesti morate število!')
+    while True:
+        try:
+            tezavnost = int(input("Težavnost, vnesite število od 1 do 5> "))
+            break
+        except:
+            print('Vnesti morate število!')
     postopek = input("Postopek> ")
-    nov_recept = Recept(ime, stevilo_oseb, tezavnost, postopek)
-    kuharica.dodaj_recept(nov_recept)
+    nov_recept = Recept(ime, stevilo_oseb, sestavine, tezavnost, postopek)
+    kategorija.dodaj_recept(nov_recept)
 
 
 def pobrisi_recept():
+    kategorija = izberi_kategorijo(kuharica)
     print("izberite recept, ki bi ga radi odstranili.")
-    recept = izberi_recept(kuharica)
-    kuharica.pobrisi_recept(recept)
+    recept = izberi_recept(kategorija)
+    kategorija.pobrisi_recept(recept)
 
 def dodaj_sestavino():
-    print("Izberi recept v katerega bi rad dodal sestavino.")
-    recept = izberi_recept(kuharica)
+    print('Izberite kategorijo kjer boste dodajali sestavino.')
+    kategorija = izberi_kategorijo(kuharica)
+    print("Izberite recept v katerega bi radi dodali sestavino.")
+    recept = izberi_recept(kategorija)
     print("Vnesite podatke.")
     ime = input("Ime> ")
     kolicina = input("Količina> ")
     recept.dodaj_sestavino(ime, kolicina)
 
 def pobrisi_sestavino():
-    print("Izberite sestavino, ki bi jo radi odstranili.")
-    recept = izberi_recept(kuharica)
+    print('Izberite kategorijo kjer bi radi odstranili sestavino.')
+    kategorija = izberi_kategorijo(kuharica)
+    print("Izberite recept kjer bi radi odstrani sestavino.")
+    recept = izberi_recept(kategorija)
     sestavina = izberi_sestavino(recept)
     recept.pobrisi_sestavino(sestavina)
-
+#Vrne napako?? našteje le večkrat prvo sestavino in ne vseh!
 
 tekstovni_vmesnik()
 
