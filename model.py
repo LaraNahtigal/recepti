@@ -1,43 +1,47 @@
 import json
+import random
+import hashlib
 
 class Kuharica:
-    def __init__(self):
-        self.kategorije = []
-        self.aktualna_kategorija = None
+    def __init__(self, kategorije):
+        self.kategorije = kategorije
 
-    def dodaj_kategorijo(self, kategorija):
-        self.kategorije.append(kategorija)
-        if not self.aktualna_kategorija:
-            self.aktualna_kategorija = kategorija
+    def dodaj_kategorijo(self, ime_kategorije):
+        for kategorija in self.kategorije:
+            if kategorija.ime == ime_kategorije:
+                return {"ime": "Kategorija s tem imenom že obstaja"}
+        nova_kategorija = Kategorija(ime_kategorije, recepti = [])
+        self.kategorije.append(nova_kategorija)
+    
 
     def pobrisi_kategorijo(self, kategorija):
-        self.kategorije.remove(kategorija)
+        for neka_kategorija in self.kategorije:
+            if neka_kategorija.ime == kategorija:
+                self.kategorije.remove(neka_kategorija)
 
-    def zamenjaj_kategorijo(self, kategorija):
-        self.aktualna_kategorija = kategorija
 
-    def dodaj_recept(self, recept):
-        self.aktualna_kategorija.dodaj_recept(recept)
+    def preveri_podatke_nove_kategorije(self, nova_kategorija):
+        for kategorija in self.kategorije:
+            if kategorija.ime == nova_kategorija.ime:
+                return {"ime": "Kategorija s tem imenom že obstaja"}
 
-    def pobrisi_recept(self, recept):
-        self.aktualna_kategorija.pobrisi_recept(recept)
+    def recepti_v_kategoriji(self, kategorija):
+        for kategorija in self.kategorije:
+            return kategorija.recepti
+
 
     def v_slovar(self):
         return {
-            "kategorije": [kategorija.v_slovar() for kategorija in self.kategorije],
-            "aktualna_kategorija": self.kategorije.index(self.aktualna_kategorija)
-            if self.aktualna_kategorija
-            else None,
+            "kategorije": [kategorija.v_slovar() for kategorija in self.kategorije]
         }
 
     @staticmethod
     def iz_slovarja(slovar):
-        kuharica = Kuharica()
-        kuharica.kategorije = [
+        kuharica = Kuharica(
+            [
             Kategorija.iz_slovarja(nek_spisek) for nek_spisek in slovar["kategorije"]
-        ]
-        if slovar["aktualna_kategorija"] is not None:
-            kuharica.aktualna_kategorija = kuharica.spiski[slovar["aktualna_kategorija"]]
+            ]
+        )
         return kuharica
 
     def shrani_v_datoteko(self, ime_datoteke):
@@ -51,34 +55,28 @@ class Kuharica:
             slovar = json.load(dat)
             return Kuharica.iz_slovarja(slovar)
 
-    def preveri_podatke_nove_kategorije(self, ime):
-        napake = {}
-        if not ime:
-            napake["ime"] = "Ime mora biti neprazno."
-        for kategorija in self.kategorije:
-            if kategorija.ime == ime:
-                napake["ime"] = "Ime je že zasedeno."
-        return napake
 
 class Kategorija:
-    def __init__(self, ime):
+    def __init__(self, ime, recepti):
         self.ime = ime
-        self.recepti = []
-        self.aktualni_recept = None
+        self.recepti = recepti
 
-    def dodaj_recept(self, recept):
-        self.recepti.append(recept)
-        if not self.aktualni_recept:
-            self.aktualni_recept = recept
+
+    def dodaj_recept(self, recept, stevilo_oseb, tezavnost, sestavine, postopek):
+        for nek_recept in self.recepti:
+            if nek_recept.ime == recept:
+                return {"ime": "Recept s tem imenom že obstaja"}
+        nov_recept = Recept(recept, stevilo_oseb, tezavnost, sestavine, postopek)
+        self.recepti.append(nov_recept)
+
 
     def pobrisi_recept(self, recept):
-        self.recepti.remove(recept)
+        for nek_recept in self.recepti:
+            if nek_recept.ime == recept:
+                self.recepti.remove(nek_recept)
 
-    def zamenjaj_recept(self, recept):
-        self.aktualni_recept = recept
-
-    def stevilo_receptov(self):
-        return len(self.recepti)
+#    def stevilo_receptov(self):
+#        return len(self.recepti)
 
     def v_slovar(self):
         return {
@@ -90,24 +88,23 @@ class Kategorija:
 
     @staticmethod
     def iz_slovarja(slovar):
-        kategorija = Kategorija(slovar["ime"])
-        kategorija.recepti = [
-            Recept.iz_slovarja(nek_recept) for nek_recept in slovar["recepti"]
-        ]
+        kategorija = Kategorija(slovar["ime"], [Recept.iz_slovarja(recept) for recept in slovar["recepti"]],)
         return kategorija
 
+
 class Recept:
-    def __init__(self, ime, stevilo_oseb, tezavnost, postopek):
+    def __init__(self, ime, stevilo_oseb, tezavnost, sestavine, postopek):
         self.ime = ime
         self.stevilo_oseb = stevilo_oseb
         self.tezavnost = tezavnost
-        self.sestavine = {}
+        self.sestavine = sestavine
         self.postopek = postopek
         
+
     def dodaj_sestavino(self, ime, kolicina):
         self.sestavine[ime] = kolicina
 
-    def pobrisi_sestavino(self, ime):
+    def odstrani_sestavino(self, ime):
         self.sestavine.pop(ime)
 
     def v_slovar(self):
@@ -130,3 +127,81 @@ class Recept:
         )
 
 
+class Uporabnik:
+
+    def __init__(self, ime, uporabnisko_ime, zasifrirano_geslo, kuharica):
+        self.ime = ime
+        self.uporabnisko_ime = uporabnisko_ime
+        self.zasifrirano_geslo = zasifrirano_geslo
+        self.kuharica = kuharica
+
+
+    @staticmethod
+    def ime_uporabnikove_datoteke(uporabnisko_ime):
+        return f"{uporabnisko_ime}.json"
+
+
+    @staticmethod
+    def iz_datoteke(uporabnisko_ime):
+        try:
+            with open(Uporabnik.ime_uporabnikove_datoteke(uporabnisko_ime)) as datoteka:
+                slovar = json.load(datoteka)
+                return Uporabnik.iz_slovarja(slovar)
+        except FileNotFoundError:
+            return None
+
+    def preveri_geslo(self, geslo_v_cistopisu):
+        sol, _ = self.zasifrirano_geslo.split("$")
+        return self.zasifrirano_geslo == Uporabnik._zasifriraj_geslo(geslo_v_cistopisu, sol)
+
+    @staticmethod
+    def prijava(uporabnisko_ime, geslo_v_cistopisu):
+        uporabnik = Uporabnik.iz_datoteke(uporabnisko_ime)
+        if uporabnik is None:
+            raise ValueError("Uporabniško ime ne obstaja!")
+        elif uporabnik.preveri_geslo(geslo_v_cistopisu):
+            return uporabnik
+        else:
+            raise ValueError("Geslo je napačno!")
+
+
+    @staticmethod
+    def registracija(ime, uporabnisko_ime, geslo_v_cistopisu):
+        if Uporabnik.iz_datoteke(uporabnisko_ime) is not None:
+            raise ValueError("Uporabniško ime že obstaja!")
+        else:
+            kategorije = []
+            zasifrirano_geslo = Uporabnik._zasifriraj_geslo(geslo_v_cistopisu)
+            uporabnik = Uporabnik(ime, uporabnisko_ime, zasifrirano_geslo, Kuharica(kategorije))
+            uporabnik.v_datoteko()
+            return uporabnik
+
+    def _zasifriraj_geslo(geslo_v_cistopisu, sol=None):
+        if sol is None:
+            sol = str(random.getrandbits(32))
+        posoljeno_geslo = sol + geslo_v_cistopisu
+        h = hashlib.blake2b()
+        h.update(posoljeno_geslo.encode(encoding="utf-8"))
+        return f"{sol}${h.hexdigest()}"
+
+    def v_datoteko(self):
+        with open(Uporabnik.ime_uporabnikove_datoteke(self.uporabnisko_ime), "w", encoding="utf-8") as datoteka:
+            json.dump(self.v_slovar(), datoteka, ensure_ascii=False, indent=4)
+
+    # slovar
+
+    def v_slovar(self):
+        return {
+            "ime": self.ime,
+            "uporabnisko_ime": self.uporabnisko_ime,
+            "zasifrirano_geslo": self.zasifrirano_geslo,
+            "kuharica": self.kuharica.v_slovar()
+        }
+
+    @staticmethod
+    def iz_slovarja(slovar):
+        ime = slovar["ime"]
+        uporabnisko_ime = slovar["uporabnisko_ime"]
+        zasifrirano_geslo = slovar["zasifrirano_geslo"]
+        kuharica = Kuharica.iz_slovarja(slovar["kuharica"])
+        return Uporabnik(ime, uporabnisko_ime, zasifrirano_geslo, kuharica)
