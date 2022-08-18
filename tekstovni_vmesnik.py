@@ -46,18 +46,22 @@ def prikaz_kategorije(kategorija):
 def prikaz_recepta(recept):
     return f"{recept.ime}, sestavine: {recept.sestavine}"
 
+
 def prikaz_sestavine(sestavine):
     for sestavina in sestavine.keys():
         return f'{sestavina} - {sestavine[sestavina]}'
 
+
 def izberi_kategorijo(model):
     return izberi_moznost([(kategorija, prikaz_kategorije(kategorija)) for kategorija in model.kategorije])
+
 
 def izberi_recept(model):
     return izberi_moznost([(recept, prikaz_recepta(recept)) for recept in model.recepti])
 
 def izberi_sestavino(recept):
     return izberi_moznost([(ime, prikaz_sestavine(recept.sestavine)) for ime in recept.sestavine.keys()])
+
 
 def tekstovni_vmesnik():
     prikazi_pozdravno_sporocilo()
