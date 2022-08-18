@@ -75,8 +75,6 @@ class Kategorija:
             if nek_recept.ime == recept:
                 self.recepti.remove(nek_recept)
 
-#    def stevilo_receptov(self):
-#        return len(self.recepti)
 
     def v_slovar(self):
         return {
@@ -85,6 +83,7 @@ class Kategorija:
                 recept.v_slovar() for recept in self.recepti
                 ],
         }
+
 
     @staticmethod
     def iz_slovarja(slovar):
@@ -104,8 +103,10 @@ class Recept:
     def dodaj_sestavino(self, ime, kolicina):
         self.sestavine[ime] = kolicina
 
+
     def odstrani_sestavino(self, ime):
         self.sestavine.pop(ime)
+
 
     def v_slovar(self):
         return {
@@ -115,6 +116,7 @@ class Recept:
             "sestavine": self.sestavine,
             "postopek": self.postopek
         }
+
 
     @staticmethod
     def iz_slovarja(slovar):
@@ -150,9 +152,11 @@ class Uporabnik:
         except FileNotFoundError:
             return None
 
+
     def preveri_geslo(self, geslo_v_cistopisu):
         sol, _ = self.zasifrirano_geslo.split("$")
         return self.zasifrirano_geslo == Uporabnik._zasifriraj_geslo(geslo_v_cistopisu, sol)
+
 
     @staticmethod
     def prijava(uporabnisko_ime, geslo_v_cistopisu):
@@ -176,6 +180,7 @@ class Uporabnik:
             uporabnik.v_datoteko()
             return uporabnik
 
+
     def _zasifriraj_geslo(geslo_v_cistopisu, sol=None):
         if sol is None:
             sol = str(random.getrandbits(32))
@@ -184,11 +189,11 @@ class Uporabnik:
         h.update(posoljeno_geslo.encode(encoding="utf-8"))
         return f"{sol}${h.hexdigest()}"
 
+
     def v_datoteko(self):
         with open(Uporabnik.ime_uporabnikove_datoteke(self.uporabnisko_ime), "w", encoding="utf-8") as datoteka:
             json.dump(self.v_slovar(), datoteka, ensure_ascii=False, indent=4)
 
-    # slovar
 
     def v_slovar(self):
         return {
@@ -197,6 +202,7 @@ class Uporabnik:
             "zasifrirano_geslo": self.zasifrirano_geslo,
             "kuharica": self.kuharica.v_slovar()
         }
+
 
     @staticmethod
     def iz_slovarja(slovar):
