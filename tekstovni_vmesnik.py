@@ -126,7 +126,7 @@ def prikazi_kategorijo():
     print("Izberite kategorijo, ki bi jo radi videli.")
     kategorija = izberi_kategorijo(kuharica)
     return f'{kategorija} : {kategorija.recepti}'
-#Napaka, saj prikaže vse kategorije in ne samo zahtevane!!!
+
 
 def dodaj_recept():
     kategorija = izberi_kategorijo(kuharica)
@@ -156,6 +156,7 @@ def pobrisi_recept():
     recept = izberi_recept(kategorija)
     kategorija.pobrisi_recept(recept)
 
+
 def dodaj_sestavino():
     print('Izberite kategorijo kjer boste dodajali sestavino.')
     kategorija = izberi_kategorijo(kuharica)
@@ -166,6 +167,7 @@ def dodaj_sestavino():
     kolicina = input("Količina> ")
     recept.dodaj_sestavino(ime, kolicina)
 
+
 def pobrisi_sestavino():
     print('Izberite kategorijo kjer bi radi odstranili sestavino.')
     kategorija = izberi_kategorijo(kuharica)
@@ -173,7 +175,7 @@ def pobrisi_sestavino():
     recept = izberi_recept(kategorija)
     sestavina = izberi_sestavino(recept)
     recept.pobrisi_sestavino(sestavina)
-#Vrne napako?? našteje le večkrat prvo sestavino in ne vseh!
+
 
 tekstovni_vmesnik()
 
