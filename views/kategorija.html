@@ -6,7 +6,7 @@
           % for index_kategorije, kategorija in enumerate(kategorije):
           % if kategorija == aktualna_kategorija:
           <a class="button is-primary is-selected" name="index_kategorije" value="{{index_kategorije}}">
-            <span style="text-transform:uppercase"><b>{{kategorija.ime}}</b></span></a><br><br>
+            <h3>{{kategorija.ime}}</h3></a>
               <form action="/dodaj_recept/{{index_kategorije}}/" method="POST">
                 <fieldset>
                   <legend>DODAJ RECEPT</legend>
@@ -33,8 +33,12 @@
         <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
             <ul>                  
               <h3>Recepti:</h3>
-              % for index_recepta, recept in enumerate(recepti):
-              <li><a class="button" href="/recept/{{index_kategorije}}/{{index_recepta}}/"  name="index_recepta" value="{{index_recepta}}">{{recept.ime}}
+              % if len(recepti) == 0:
+              <i>Ni dodan noben recept.</i>
+              % else:
+                % for index_recepta, recept in enumerate(recepti):
+                <li><a class="button" href="/recept/{{index_kategorije}}/{{index_recepta}}/"  name="index_recepta" value="{{index_recepta}}">{{recept.ime}}
+                % end
               % end
             </ul>
         </nav>
