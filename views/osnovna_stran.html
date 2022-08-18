@@ -1,21 +1,29 @@
 % rebase('base.html')
 <!-- Main container -->
 
+
+<img src="img/slika.jpg" alt="moji_recepti" style="float:right; width: 25%; height: auto; margin:0px 10px">
+<img src="img/slika.jpg" alt="moji_recepti" style="float:left; width: 25%; height: auto; margin:0px 10px">
 <nav class="level">
     <div class="level-right">
-        <p style="text-align:center"><i>Pozdravljeni v svoj dnevnik receptov. Tu si lahko shranjujete in spreminjate svoje najljubše recepte.
-            </i></p><br>
+        <p style="text-align: center;"><i>Pozdravljeni v svoj dnevnik receptov.<br>
+            Tu si lahko shranjujete in spreminjate svoje najljubše recepte.
+        </i></p><br>
         <p>Kliknite <a class="button is-primary" href="/dodaj_kategorijo/" method="POST">TU</a>, če želite dodati kategorijo.<br>
-        Spodaj najdete že obstoječe kategorije, klik na želeno kategorijo vam bo pokazal vse recepte, ki se skrivajo v njej.</p>
+        Spodaj najdete že obstoječe kategorije. Klik na želeno kategorijo vam bo pokazal vse recepte, ki se skrivajo v njej.</p>
     </div>
     <div class="level-left">
         <div class="buttons has-addons field is-horizontal">
             <dl>
                 <dt><b>Kategorije:</b></dt>
-                    % for index_kategorije, kategorija in enumerate(kategorije):
-                    <dd><a class="button" href="/kategorija/{{index_kategorije}}/"  name="index_kategorije" value="{{index_kategorije}}">
-                        <span style="text-transform:uppercase">{{kategorija.ime}}</span>
-                    </a></dd>
+                    % if len(kategorije) == 0:
+                    <i>Ni dodana nobena kategorija.</i>
+                    % else:
+                        % for index_kategorije, kategorija in enumerate(kategorije):                    
+                        <dd><a class="button" href="/kategorija/{{index_kategorije}}/"  name="index_kategorije" value="{{index_kategorije}}">
+                            <span style="text-transform:uppercase">{{kategorija.ime}}</span>
+                        </a></dd>
+                        % end
                     % end
             </dl>
         </div>
