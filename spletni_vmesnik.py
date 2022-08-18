@@ -189,8 +189,14 @@ def odstrani_sestavino(index_kategorije, index_recepta):
     bottle.redirect(f"/recept/{index_kategorije}/{index_recepta}/") 
     
     
+@bottle.get('/img/<picture>')
+def serve_picture(picture):
+    return bottle.static_file(picture, root='img')
+
+
 @bottle.error(404)
 def error_404(error):
     return "Ta stran ne obstaja!"
+  
   
 bottle.run(reloader=True, debug=True)
