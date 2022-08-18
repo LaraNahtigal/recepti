@@ -1,8 +1,8 @@
 % rebase('base.html')
 
 <nav class="level">
-    <div class="level-left">
-        <div class="buttons has-addons field is-horizontal">
+    <div id="recept">
+        <div id="posrecept">
             % for index_recepta, recept in enumerate(recepti):
             % if recept==aktualen_recept:
             <h3>{{recept.ime}}</h3>
@@ -10,6 +10,8 @@
             <li>Težavnost: {{recept.tezavnost}}</li>
             <li>Postopek: {{recept.postopek}}</li>
             <li>Sestavine: {{recept.sestavine}}</li><br><br>
+        </div>
+        <div>
                 % for index_kategorije, kategorija in enumerate(kategorije):
                 % if index_kategorije == index_aktualne_kat: 
                 <form action="/dodaj_sestavino/{{index_kategorije}}/{{index_recepta}}/" method="POST">
@@ -36,10 +38,10 @@
             % end
         </div>
     </div>
-    <div class="field is-grouped">
+    <div id="footer">
         <div class="control">
             <a class="button is-link is-light" href="/">Prekliči</a>
         </div>
-      </div>
+    </div>
 </nav>
                 

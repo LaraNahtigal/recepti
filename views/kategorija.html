@@ -1,8 +1,8 @@
 % rebase('base.html')
 
 <nav class="level">
-  <div class="level-left">
-      <div class="buttons has-addons field is-horizontal">
+  <div id="main">
+      <div>
           % for index_kategorije, kategorija in enumerate(kategorije):
           % if kategorija == aktualna_kategorija:
           <a class="button is-primary is-selected" name="index_kategorije" value="{{index_kategorije}}">
@@ -29,8 +29,9 @@
                   <input type="submit" value="Izbriši!" href="/recept/{{index_kategorije}}/">
                 </fieldset>
               </form>
-      <div class="box">
-        <nav class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
+      </div>
+      <div>
+        <nav style="float:right; margin-right: 25%;" class="breadcrumb has-arrow-separator" aria-label="breadcrumbs">
             <ul>                  
               <h3>Recepti:</h3>
               % if len(recepti) == 0:
@@ -43,19 +44,19 @@
             </ul>
         </nav>
       </div>
+    </div>
+    <div id="footer">
           % else:
           <a href="/kategorija/{{index_kategorije}}/" class="button" name="index_kategorije" value="{{index_kategorije}}">
             <span style="text-transform:uppercase">{{kategorija.ime}}</span><br>
           </a>
           % end
           % end
-    </div>
-    <div class="field is-grouped">
       <div class="control">
           <a class="button is-link is-light" href="/">Prekliči</a>
       </div>
     </div>
-  </nav>
+</nav>
 
 
 

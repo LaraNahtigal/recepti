@@ -1,21 +1,19 @@
 % rebase("base.html")
 
 <form method="POST">
-    <div class="level-right">
+    <div style="margin: 10%;">
         <p><h3>Dodaj kategorijo:</h3></b>
-            <div class="panel-block">
+            <div style="border-style: ridge; background-color: lightgoldenrodyellow; padding: 10px; width: fit-content;" class="panel-block">
                 <form action="/dodaj_kategorijo/" method="POST">
-                    ime kategorije: <input type="text" name="ime_kategorije">
+                    Ime kategorije: <input type="text" name="ime_kategorije">
                     <p><input type="submit" value="Dodaj kategorijo!" href="/"></p>
                 </form>
             </div>
-        </form>
-    </div>
         % if "ime" in napake:
         <p class="help is-danger">{{ napake["ime"] }}</p>
         % end
     </div>
-    <div class="field is-grouped">
+    <div id="footer">
         <div class="control">
             <a class="button is-link is-light" href="/">Prekliči</a>
         </div>

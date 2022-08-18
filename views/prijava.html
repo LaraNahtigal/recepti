@@ -3,20 +3,20 @@
 <body>
   <div class="field">
     <form method="POST">
-        <label class="label">Uporabniško ime</label>
-        <div class="control has-icons-left">
-            <b>UPORABNIŠKO IME</b>: <input name="uporabnisko_ime" type="text" placeholder="uporabniško ime">
-            <br>
-        </div>
-        % if napaka:
-        <p class="help is-danger">{{ napaka }}</p>
-        % end
-        <label class="label">Geslo</label>
-        <div class="control has-icons-left">
-            <b>GESLO</b>: <input name="geslo" type="password" placeholder="geslo">
-            <br>
-        <input type="submit" value="PRIJAVI SE">
-        </div>
+      <label class="label">Uporabniško ime</label>
+      <div class="control has-icons-left">
+          <b>UPORABNIŠKO IME</b>: <input name="uporabnisko_ime" type="text" placeholder="uporabniško ime">
+          <br>
+      </div>
+      % if napaka:
+      <p class="help is-danger">{{ napaka }}</p>
+      % end
+      <label class="label">Geslo</label>
+      <div class="control has-icons-left">
+          <b>GESLO</b>: <input name="geslo" type="password" placeholder="geslo">
+          <br>
+      <input type="submit" value="PRIJAVI SE">
+      </div>
     </form>
   </div>
 </body>
